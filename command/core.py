@@ -61,7 +61,7 @@ class Command(object):
 
                         line = thefile.readline()
                         if not line:
-                            time.sleep(0.1)
+                            time.sleep(0.001)
                             continue
                         yield line
 
@@ -74,7 +74,7 @@ class Command(object):
                 shutdown_event = threading.Event()
                 thread = threading.Thread(
                     target=track_run,
-                    args=(open(outputtmp.name, 'r+b'), debug, shutdown_event),
+                    args=(open(outputtmp.name, 'rb'), debug, shutdown_event),
                     name='Monitoring'
                 )
                 thread.start()
