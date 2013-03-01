@@ -131,11 +131,7 @@ class Command(object):
             # Use fake exit code since we can't get the accurate one from this
             raise CommandException("command failed: %s" % error, 1, error)
         except subprocess.CalledProcessError as error:
-            response = Response
-            response.command = command
-            response.exit = error.returncode
-            response.output = error.output
-            return response
+            raise CommandException(error.output, error.returncode, error.output)
         finally:
             if debug_output:
                 shutdown_event.set()
@@ -146,10 +142,12 @@ class CommandException(Exception):
     Class for commanbd exceptions. Beside a specific error message it also stores the
     return code and the output of the command
     """
-    def __init__(self, message, exit_code, output):
+    def __init__(self, message, exit_code=1, output=None):
         Exception.__init__(self, message)
         self.message = message
         self.exit = exit_code
+        if output is None:
+            output = message
         self.output = output
 
     def __str__(self):
@@ -161,7 +159,6 @@ class Response(object):
     exit = 0
     output = ''
     command = []
-
 
 
 def executable_exists(program, environ=None):
