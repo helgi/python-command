@@ -39,7 +39,7 @@ class Command(object):
         environ.update(env or {})
 
         # Check if the executable is executable and in fact exists
-        executable_exists(command[0], environ)
+        which(command[0], environ)
 
         # Use tempfile to get past a limitation with subprocess.PIPE and 64kb.
         # Also to have a file to plug into the track generator
@@ -161,10 +161,10 @@ class Response(object):
     command = []
 
 
-def executable_exists(program, environ=None):
+def which(program, environ=None):
     """
-    Function to find out whether an executable exists in the PATH
-    of the user.  If so, the absolute path to the executable is returned.
+    Find out if an executable exists in the supplied PATH.
+    If so, the absolute path to the executable is returned.
     If not, an exception is raised.
     """
     def is_exe(path):

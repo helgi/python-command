@@ -1,6 +1,7 @@
+from __future__ import print_function
 import sys
 import os
-from os.path import join, realpath, dirname, exists
+from os.path import realpath, dirname
 
 try:
     import command
@@ -18,32 +19,37 @@ except ImportError:
 test_path = realpath(dirname(__file__))
 
 class TestCommand:
-    def test_executable_exists_bin_sleep(self):
-        command.executable_exists('/bin/sleep')
+    def test_which_bin_sleep(self):
+        command.which('/bin/sleep')
 
-    def test_executable_exists_foo(self):
+    def test_which_bin_sleep2(self):
+        assert command.which('sleep') == '/bin/sleep'
+
+
+    def test_which_foo(self):
         with py.test.raises(command.CommandException):
-            command.executable_exists('foo')
+            command.which('foo')
 
-    def test_executable_exists_full_foo(self):
+    def test_which_full_foo(self):
         with py.test.raises(command.CommandException):
-            command.executable_exists('/bin/foo')
+            command.which('/bin/foo')
 
-    def test_executable_exists_not_x(self):
+    def test_which_not_x(self):
         with py.test.raises(command.CommandException):
-            command.executable_exists('/etc/hosts')
+            command.which('/etc/hosts')
 
-    def test_executable_exists_relative_false(self):
-        command.executable_exists('false')
+    def test_which_relative_false(self):
+        command.which('false')
 
-    def test_executable_exists_none(self):
+    def test_which_none(self):
         with py.test.raises(command.CommandException):
-            command.executable_exists(None)
+            command.which(None)
 
     def test_run_ls(self):
         response = command.run(['ls', test_path])
         assert response.exit == 0
-        assert response.output == """__pycache__
+        assert response.output == """\
+__pycache__
 test_command.py"""
 
     def test_run_failure(self):
@@ -56,3 +62,4 @@ test_command.py"""
     def test_run_timeout_failure(self):
         with py.test.raises(command.CommandException):
             command.run(['sleep', '2'], timeout=1)
+
