@@ -63,3 +63,19 @@ test_command.py"""
         with py.test.raises(command.CommandException):
             command.run(['sleep', '2'], timeout=1)
 
+    def test_run_debug(self, capsys):
+        def debug_print(line):
+            print(line)
+
+        response = command.run(['ls', test_path], debug=debug_print)
+        out, err = capsys.readouterr()
+
+        assert response.exit == 0
+        assert response.output == """\
+__pycache__
+test_command.py"""
+        assert out == """\
+__pycache__
+test_command.py
+"""
+        assert err == ''
