@@ -34,7 +34,41 @@ import threading
 class Command(object):
     @classmethod
     def run(cls, command, timeout=None, cwd=None, env=None, debug=None):
-        """This method is used to run commands on the given system"""
+        """
+        Runs a given command on the system within a set time period, providing an easy way to access
+        command output as it happens without waiting for the command to finish running.
+
+        :type list
+        :param command: Should be a list that contains the command that should be ran on the given
+                        system. The only whitespaces that can occur is for paths that use a backslash
+                        to escape it appropriately
+
+        :type int
+        :param timeout: Specificed in seconds. If a command outruns the timeout then the command and
+                        its child processes will be terminated. The default is to run
+
+        :type string
+        :param cwd: If cwd is set then the current directory will be changed to cwd before it is executed.
+                    Note that this directory is not considered when searching the executable, so you
+                    can’t specify the program’s path relative to cwd.
+
+        :type dict
+        :param env: A dict of any ENV variables that should be combined into the OS ENV that will help
+                    the command to run successfully. Note that more often than not the command run
+                    does not have the same ENV variables available as your shell by default and as such
+                    require some assistance.
+
+        :type function
+        :param debug: A function (also a class function) can be passed in here and all output, line by line,
+                      from the command being run will be passed to it as it gets outputted to stdout.
+                      This allows for things such as logging (using the built in python logging lib)
+                      what is happening on long running commands or redirect output of a tail -f call
+                      as lines get outputted without having to wait till the command finishes.
+
+        :return returns :class:`Command.Response` that contains the exit code and the output from the command
+        """
+
+        # Merge together the system ENV details and the passed in ones if any
         environ = dict(os.environ)
         environ.update(env or {})
 
@@ -141,6 +175,15 @@ class CommandException(Exception):
     """
     Class for commanbd exceptions. Beside a specific error message it also stores the
     return code and the output of the command
+
+    :type string
+    :param Class specific message
+
+    :type int
+    :param exit_code: Exit code of the failed program (default: 1)
+
+    :type string
+    :param output: Any output associated with the failure from the program ran (default: None)
     """
     def __init__(self, message, exit_code=1, output=None):
         Exception.__init__(self, message)
@@ -166,6 +209,14 @@ def which(program, environ=None):
     Find out if an executable exists in the supplied PATH.
     If so, the absolute path to the executable is returned.
     If not, an exception is raised.
+
+    :type string
+    :param program: Executable to be checked for
+
+    :param dict
+    :param environ: Any additional ENV variables required, specifically PATH
+
+    :return string|:class:`command.CommandException` Returns the location if found, otherwise raises exception
     """
     def is_exe(path):
         """
@@ -193,4 +244,37 @@ def which(program, environ=None):
 
 
 def run(command, timeout=None, cwd=None, env=None, debug=None):
+    """
+    Runs a given command on the system within a set time period, providing an easy way to access
+    command output as it happens without waiting for the command to finish running.
+
+    :type list
+    :param command: Should be a list that contains the command that should be ran on the given
+                    system. The only whitespaces that can occur is for paths that use a backslash
+                    to escape it appropriately
+
+    :type int
+    :param timeout: Specificed in seconds. If a command outruns the timeout then the command and
+                    its child processes will be terminated. The default is to run
+
+    :type string
+    :param cwd: If cwd is set then the current directory will be changed to cwd before it is executed.
+                Note that this directory is not considered when searching the executable, so you
+                can’t specify the program’s path relative to cwd.
+
+    :type dict
+    :param env: A dict of any ENV variables that should be combined into the OS ENV that will help
+                the command to run successfully. Note that more often than not the command run
+                does not have the same ENV variables available as your shell by default and as such
+                require some assistance.
+
+    :type function
+    :param debug: A function (also a class function) can be passed in here and all output, line by line,
+                  from the command being run will be passed to it as it gets outputted to stdout.
+                  This allows for things such as logging (using the built in python logging lib)
+                  what is happening on long running commands or redirect output of a tail -f call
+                  as lines get outputted without having to wait till the command finishes.
+
+    :return returns :class:`Command.Response` that contains the exit code and the output from the command
+    """
     return Command.run(command, timeout=timeout, cwd=cwd, env=env, debug=debug)
