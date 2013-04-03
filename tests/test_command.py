@@ -48,7 +48,7 @@ class TestCommand:
     def test_run_ls(self):
         response = command.run(['ls', test_path])
         assert response.exit == 0
-        assert response.output == """\
+        assert response.output == b"""\
 __pycache__
 test_command.py"""
 
@@ -71,11 +71,17 @@ test_command.py"""
         out, err = capsys.readouterr()
 
         assert response.exit == 0
-        assert response.output == """\
+        assert response.output == b"""\
 __pycache__
 test_command.py"""
-        assert out == """\
+
+        # Pyton 2 vs 3 handles strings in different ways
+        if sys.version_info.major is 2:
+            assert out == b"""\
 __pycache__
 test_command.py
 """
+        elif sys.version_info.major is 3:
+            assert out == "b'__pycache__'\nb'test_command.py'\n"
+
         assert err == ''
