@@ -61,7 +61,7 @@ class Command(object):
 
                         line = thefile.readline()
                         if not line:
-                            time.sleep(0.001)
+                            time.sleep(0.00001)
                             continue
                         yield line
 
