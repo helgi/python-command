@@ -1,7 +1,8 @@
 Command
 =======
+[![Build Status](https://travis-ci.org/helgi/python-command.png)](https://travis-ci.org/helgi/python-command)
 
-Wrapper around subprocess.popen with on the fly debug / logging capabilities with
+Wrapper around subprocess.popen with on the fly debug / logging capabilities and
 timeout handling.
 
 Uses tempfiles for stdout/stderr to get past the 64kb subprocess.PIPE bug/limitation in python.
