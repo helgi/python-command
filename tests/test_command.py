@@ -76,7 +76,7 @@ __pycache__
 test_command.py"""
 
         # Pyton 2 vs 3 handles strings in different ways
-        if sys.version_info.major is 2:
+        if sys.version_info[0] is 2:
             assert out == b"""\
 __pycache__
 test_command.py
