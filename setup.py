@@ -19,6 +19,7 @@ setup(
     author_email="helgi@php.net",
     url="http://github.com/helgi/python-command",
     packages=find_packages(),
+    platforms=['any'],
     install_requires=['setuptools'],
     license="MIT License",
     keywords="subprocess,command",
