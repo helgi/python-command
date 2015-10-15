@@ -63,6 +63,13 @@ test_command.py"""
         with py.test.raises(command.CommandException):
             command.run(['sleep', '2'], timeout=1)
 
+    def test_run_command_string(self):
+        response = command.run('ls %s' % test_path)
+        assert response.exit == 0
+        assert response.output == b"""\
+__pycache__
+test_command.py"""
+
     def test_run_debug(self, capsys):
         def debug_print(line):
             print(line)

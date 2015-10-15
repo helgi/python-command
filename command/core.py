@@ -24,6 +24,7 @@ THE SOFTWARE.
 """
 
 import subprocess
+import shlex
 import time
 import os
 from os.path import isfile, split, join
@@ -71,6 +72,10 @@ class Command(object):
         # Merge together the system ENV details and the passed in ones if any
         environ = dict(os.environ)
         environ.update(env or {})
+
+        # If string is passed in for the command then attempt to split it up
+        if isinstance(command, str):
+            command = shlex.split(command)
 
         # Check if the executable is executable and in fact exists
         which(command[0], environ)
